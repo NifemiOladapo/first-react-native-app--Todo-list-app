@@ -1,3 +1,4 @@
+import { StatusBar } from "expo-status-bar";
 import { useEffect, useRef, useState } from "react";
 import {
   StyleSheet,
@@ -7,44 +8,55 @@ import {
   TextInput,
   Alert,
   ScrollView,
+  FlatList,
 } from "react-native";
+import Goalinput from "./components/Goalinput";
+import Goalitem from "./components/Goalitem";
 
 export default function App() {
-  const [inputText, setinputText] = useState("");
   const [todos, setTodos] = useState([]);
+  const [modalIsVisible, setModalIsVisible] = useState(false);
+
+  const startAddGoalHandeler = () => {
+    setModalIsVisible(true);
+  };
+
+  const deleteTodo = (todoId) => {
+    setTodos((currentTodos) =>
+      currentTodos.filter((todo) => todo.id !== todoId)
+    );
+  };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.secondlayer}>
-        <TextInput
-          value={inputText}
-          onChangeText={(text) => {
-            setinputText(text);
-          }}
-          style={styles.inputStyles}
-          placeholder="Input a task"
-        />
+    <>
+      <StatusBar style="light" />
+      <View style={styles.container}>
         <Button
-          onPress={() => {
-            if (inputText === "") {
-              Alert.alert("Please. Input a task");
-              return;
-            }
-            todos.push(inputText);
-            setTodos([...todos]);
-            setinputText("");
-          }}
-          title="Create"
+          title="Add New Goal"
+          color="#5e0acc"
+          onPress={startAddGoalHandeler}
         />
+
+        {modalIsVisible ? (
+          <Goalinput
+            isVisible={modalIsVisible}
+            todos={todos}
+            setTodos={setTodos}
+            setModalIsVisible={setModalIsVisible}
+          />
+        ) : null}
+        <View style={styles.todosWrapper}>
+          <FlatList
+            showsVerticalScrollIndicator={false}
+            data={todos}
+            keyExtractor={(item, index) => item.id}
+            renderItem={(itemData) => {
+              return <Goalitem deleteTodo={deleteTodo} itemData={itemData} />;
+            }}
+          />
+        </View>
       </View>
-      {todos.map((todo, i) => {
-        return (
-          <View style={styles.thirdlayer} key={i}>
-            <Text style={{ color: "white", fontStyle: "italic" }}>{todo}</Text>
-          </View>
-        );
-      })}
-    </View>
+    </>
   );
 }
 
@@ -53,26 +65,10 @@ const styles = StyleSheet.create({
     paddingTop: 45,
     paddingHorizontal: 35,
     flex: 1,
+    backgroundColor: "#311b6b",
   },
-  inputStyles: {
-    borderWidth: 1,
-    padding: 3,
-    width: "80%",
-    marginRight: 10,
-    borderRadius: 5,
-  },
-  secondlayer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 30,
-    borderBottomColor: "grey",
-    borderBottomWidth: 1,
-    paddingBottom: 30,
-  },
-  thirdlayer: {
-    padding: 10,
-    backgroundColor: "blue",
-    borderRadius: 5,
-    marginBottom: 5,
+  todosWrapper: {
+    flex: 5,
+    marginTop: 30,
   },
 });
