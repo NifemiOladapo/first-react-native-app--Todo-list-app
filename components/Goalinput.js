@@ -9,11 +9,21 @@ import {
   Image,
 } from "react-native";
 
-const Goalinput = ({ todos, setTodos, isVisible, setModalIsVisible }) => {
+const Goalinput = ({
+  todos,
+  setTodos,
+  modalIsVisible,
+  setModalIsVisible,
+  closeOnaddGoal,
+}) => {
   const [inputText, setinputText] = useState("");
 
   return (
-    <Modal visible={isVisible} animationType="slide">
+    <Modal
+      visible={modalIsVisible}
+      animationType="slide"
+      onRequestClose={() => setModalIsVisible(false)}
+    >
       <View style={styles.secondlayer}>
         <Image
           source={require("../assets/splash.png")}
@@ -46,7 +56,9 @@ const Goalinput = ({ todos, setTodos, isVisible, setModalIsVisible }) => {
                 todos.push({ text: inputText, id: Math.random() });
                 setTodos([...todos]);
                 setinputText("");
-                setModalIsVisible(false);
+                if (closeOnaddGoal) {
+                  setModalIsVisible(false);
+                }
               }}
               title="Add Task"
             />

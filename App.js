@@ -12,10 +12,13 @@ import {
 } from "react-native";
 import Goalinput from "./components/Goalinput";
 import Goalitem from "./components/Goalitem";
+import SettingsModal from "./components/SettingsModal";
 
 export default function App() {
   const [todos, setTodos] = useState([]);
   const [modalIsVisible, setModalIsVisible] = useState(false);
+  const [closeOnaddGoal, setCloseOnaddGoal] = useState(true);
+  const [settingsIsOpen, setSettingsIsOpen] = useState(false);
 
   const startAddGoalHandeler = () => {
     setModalIsVisible(true);
@@ -31,18 +34,34 @@ export default function App() {
     <>
       <StatusBar style="light" />
       <View style={styles.container}>
+        <View style={styles.button1}>
+          <Button
+            title="Add New Goal"
+            color="#5e0acc"
+            onPress={startAddGoalHandeler}
+          />
+        </View>
         <Button
-          title="Add New Goal"
-          color="#5e0acc"
-          onPress={startAddGoalHandeler}
+          onPress={() => setSettingsIsOpen(true)}
+          color={"#4e0acc"}
+          title="Settings"
         />
-
         {modalIsVisible ? (
           <Goalinput
-            isVisible={modalIsVisible}
+            closeOnaddGoal={closeOnaddGoal}
+            setCloseOnaddGoal={setCloseOnaddGoal}
+            modalIsVisible={modalIsVisible}
             todos={todos}
             setTodos={setTodos}
             setModalIsVisible={setModalIsVisible}
+          />
+        ) : null}
+        {settingsIsOpen ? (
+          <SettingsModal
+            closeOnaddGoal={closeOnaddGoal}
+            settingsIsOpen={settingsIsOpen}
+            setSettingsIsOpen={setSettingsIsOpen}
+            setCloseOnaddGoal={setCloseOnaddGoal}
           />
         ) : null}
         <View style={styles.todosWrapper}>
@@ -66,6 +85,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 35,
     flex: 1,
     backgroundColor: "#311b6b",
+  },
+  button1: {
+    marginBottom: 20,
   },
   todosWrapper: {
     flex: 5,
